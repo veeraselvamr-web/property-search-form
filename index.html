@@ -46,7 +46,7 @@
       };
 
       try {
-        const response = await fetch("http://localhost:5678/webhook/property-search", {
+        const response = await fetch("http://192.168.1.7:5678/webhook/property-search", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
