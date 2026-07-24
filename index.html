@@ -7,6 +7,9 @@
     .search-container { max-width: 600px; margin: auto; text-align: center; }
     input, button { padding: 10px; width: 80%; margin: 5px 0; }
     button { width: auto; }
+    .message { margin-top: 20px; padding: 10px; border-radius: 5px; }
+    .success { background-color: #d4edda; color: #155724; }
+    .error { background-color: #f8d7da; color: #721c24; }
   </style>
 </head>
 <body>
@@ -16,12 +19,15 @@
       <input type="text" id="query" placeholder="e.g. 3 BHK in Chennai under 80 Lakhs" required><br>
       <button type="submit">Search</button>
     </form>
+    <div id="message"></div>
   </div>
 
   <script>
     document.getElementById("searchForm").addEventListener("submit", async function(e) {
       e.preventDefault();
       const query = document.getElementById("query").value;
+      const messageDiv = document.getElementById("message");
+      messageDiv.innerHTML = "";
 
       // Simple parsing logic
       let bedrooms = "";
@@ -46,19 +52,27 @@
       };
 
       try {
-        const response = await fetch("http://192.168.1.7:5678/webhook/property-search", {
+        const response = await fetch("http://localhost:5678/webhook/property-search", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
+          headers: { 
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data),
+          mode: 'cors'
         });
 
         if (response.ok) {
-          alert("Search submitted successfully!");
+          messageDiv.className = "message success";
+          messageDiv.innerHTML = "✓ Search submitted successfully!";
+          document.getElementById("query").value = "";
         } else {
-          alert("Error submitting search.");
+          messageDiv.className = "message error";
+          messageDiv.innerHTML = "✗ Error submitting search. Status: " + response.status;
         }
       } catch (err) {
-        alert("Connection error: " + err.message);
+        messageDiv.className = "message error";
+        messageDiv.innerHTML = "✗ Connection error: " + err.message + "<br><br><small>Make sure N8N is running on http://localhost:5678</small>";
+        console.error("Full error:", err);
       }
     });
   </script>
