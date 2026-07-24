@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Property Search</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .search-container { max-width: 600px; margin: auto; text-align: center; }
+    input, button { padding: 10px; width: 80%; margin: 5px 0; }
+    button { width: auto; }
+  </style>
+</head>
+<body>
+  <div class="search-container">
+    <h1>Property Search</h1>
+    <form id="searchForm">
+      <input type="text" id="query" placeholder="e.g. 3 BHK in Chennai under 80 Lakhs" required><br>
+      <button type="submit">Search</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("searchForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const query = document.getElementById("query").value;
+
+      // Simple parsing logic
+      let bedrooms = "";
+      let locality = "";
+      let budget = "";
+
+      const bhkMatch = query.match(/(\d+)\s*BHK/i);
+      if (bhkMatch) bedrooms = bhkMatch[1];
+
+      const budgetMatch = query.match(/(\d+)\s*(Lakhs|L|Cr|Crore)/i);
+      if (budgetMatch) budget = budgetMatch[0];
+
+      const localityMatch = query.match(/in\s+([A-Za-z\s]+)/i);
+      if (localityMatch) locality = localityMatch[1].trim();
+
+      const data = {
+        locality: locality,
+        bedrooms: bedrooms,
+        budget: budget,
+        rawQuery: query,
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        const response = await fetch("http://localhost:5678/webhook/property-search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert("Search submitted successfully!");
+        } else {
+          alert("Error submitting search.");
+        }
+      } catch (err) {
+        alert("Connection error: " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
