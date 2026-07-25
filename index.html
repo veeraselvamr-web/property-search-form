@@ -54,9 +54,9 @@
 
       try {
         console.log("Sending data:", data);
-        console.log("URL: http://localhost:5678/webhook-test/property-search");
+        console.log("URL: http://localhost:5679/webhook-test/property-search");
         
-        const response = await fetch("http://localhost:5678/webhook-test/property-search", {
+        const response = await fetch("http://localhost:5679/webhook-test/property-search", {
           method: "POST",
           headers: { 
             "Content-Type": "application/json"
@@ -78,7 +78,7 @@
         }
       } catch (err) {
         console.error("Error details:", err);
-        messageDiv.innerHTML = '<div class="message error">✗ ' + err.message + '<br><br><small>Check browser console (F12) for details. Make sure N8N webhook is activated!</small></div>';
+        messageDiv.innerHTML = '<div class="message error">✗ ' + err.message + '<br><br><small>Check browser console (F12) for details. Make sure proxy server is running on port 5679!</small></div>';
       }
     });
   </script>
